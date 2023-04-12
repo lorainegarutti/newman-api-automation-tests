@@ -1,0 +1,10 @@
+{
+  "name": "newman-api-automation-tests",
+  "version": "1.0.0",
+  "repository": "git@github.com:lorainegarutti/newman-api-automation-tests.git",
+  "author": "lorainegarutti <loraine.garutti@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test:api": "newman run -r cli,html --reporter-html-export reports/api-tests-report.html tests/api-collections/*"
+  }
+}

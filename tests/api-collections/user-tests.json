@@ -1,0 +1,1024 @@
+{
+	"info": {
+		"_postman_id": "07a6325c-1b3b-4c92-87dd-44bcb3d7846c",
+		"name": "Go REST API automated tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12103283"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List all users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Shows error message about failed authentication\", () => {",
+									"  const responseJson = pm.response.json();",
+									"",
+									"  pm.response.to.have.status(200);",
+									"  pm.expect(responseJson).to.be.an(\"array\");",
+									"  pm.expect(responseJson[0].id).to.be.a(\"number\");",
+									"  pm.expect(responseJson[0].name).to.be.a(\"string\");",
+									"  pm.expect(responseJson[0].email).to.be.a(\"string\");",
+									"  pm.expect(responseJson[0].gender).to.be.a(\"string\");",
+									"  pm.expect(responseJson[0].status).to.be.a(\"string\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const id = pm.variables.get(\"id_url\")",
+									"const name = pm.variables.get(\"name\")",
+									"const email = pm.variables.get(\"email\")",
+									"",
+									"pm.test(\"Shows success code with correct object structure\", () => {",
+									"  const responseJson = pm.response.json();",
+									"",
+									"  pm.response.to.have.status(200);",
+									"  pm.expect(responseJson.id).to.eq(id);",
+									"  pm.expect(responseJson.name).to.eq(name);",
+									"  pm.expect(responseJson.email).to.eq(email);",
+									"  pm.expect(responseJson.gender).to.eq(\"female\");",
+									"  pm.expect(responseJson.status).to.eq(\"active\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
+									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"",
+									"const postRequest = {",
+									"    url: \"https://gorest.co.in/public/v2/users\",",
+									"    method: \"POST\",",
+									"    header: {",
+									"        \"Content-Type\": \"application/json\",",
+									"        \"Authorization\": \"Bearer 2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060\"",
+									"    },",
+									"    body: {",
+									"        mode: \"raw\",",
+									"        raw: JSON.stringify({",
+									"            name: `${name}`,",
+									"            email: `${email}`,",
+									"            gender: \"female\",",
+									"            status: \"active\"",
+									"        })",
+									"    }",
+									"};",
+									"",
+									"pm.sendRequest(postRequest, (err, res) => {",
+									"    const jsonResponse = res.json();",
+									"",
+									"    pm.variables.set(\"id_url\", jsonResponse.id);",
+									"    pm.variables.set(\"name\", jsonResponse.name);",
+									"    pm.variables.set(\"email\", jsonResponse.email);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}/{{id_url}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}",
+								"{{id_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Try to get details from a non existent user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Shows error message about resource not found\", () => {",
+									"  const responseJson = pm.response.json();",
+									"",
+									"  pm.response.to.have.status(404);",
+									"  pm.expect(responseJson.message).to.eql(\"Resource not found\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}/00000000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}",
+								"00000000"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"name\", pm.variables.replaceIn(\"{{$randomFullName}}\"));",
+									"pm.variables.set(\"email\", pm.variables.replaceIn(\"{{$randomEmail}}\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Shows success code with correct object structure\", () => {",
+									"  const responseJson = pm.response.json();",
+									"",
+									"  pm.response.to.have.status(201);",
+									"  pm.expect(responseJson.id).to.be.a(\"number\");",
+									"  pm.expect(responseJson.name).to.be.a(\"string\");",
+									"  pm.expect(responseJson.email).to.be.a(\"string\");",
+									"  pm.expect(responseJson.gender).to.be.a(\"string\");",
+									"  pm.expect(responseJson.status).to.be.a(\"string\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{name}}\",\n    \"email\": \"{{email}}\",\n    \"gender\": \"female\",\n    \"status\": \"active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Try to create already existent user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Shows error message about already existent email\", () => {",
+									"  const responseJson = pm.response.json();",
+									"",
+									"  pm.expect(pm.response.code).to.be.oneOf([422,401]);",
+									"  pm.expect(responseJson[0].field).to.eql(\"email\");",
+									"  pm.expect(responseJson[0].message).to.eql(\"has already been taken\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Amanda Embranthiri\",\n    \"email\": \"amanda@email.org\",\n    \"gender\": \"female\",\n    \"status\": \"active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Try to create new user without status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Shows error message about missing status field\", () => {",
+									"  const responseJson = pm.response.json();",
+									"",
+									"  pm.expect(pm.response.code).to.be.oneOf([422,401]);",
+									"  pm.expect(responseJson[0].field).to.eql(\"status\");",
+									"  pm.expect(responseJson[0].message).to.eql(\"can't be blank\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"name\", pm.variables.replaceIn(\"{{$randomFullName}}\"));",
+									"pm.variables.set(\"email\", pm.variables.replaceIn(\"{{$randomEmail}}\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{name}}\",\n    \"email\": \"{{email}}\",\n    \"gender\": \"female\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Try to create new user missing auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Shows error message about failed authentication\", () => {",
+									"  pm.response.to.have.status(401);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"name\", pm.variables.replaceIn(\"{{$randomFullName}}\"));",
+									"pm.variables.set(\"email\", pm.variables.replaceIn(\"{{$randomEmail}}\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{name}}\",\n    \"email\": \"{{email}}\",\n    \"gender\": \"female\",\n    \"status\": \"active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user information",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const id = pm.variables.get(\"id_url\")",
+									"const status = pm.variables.get(\"status\")",
+									"",
+									"pm.test(\"Shows the same status and id have been kept\", () => {",
+									"  const responseJson = pm.response.json();",
+									"",
+									"  pm.response.to.have.status(200);",
+									"  pm.expect(responseJson.id).to.eql(id);",
+									"  pm.expect(responseJson.status).to.eql(status);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
+									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"",
+									"const postRequest = {",
+									"    url: \"https://gorest.co.in/public/v2/users\",",
+									"    method: \"POST\",",
+									"    header: {",
+									"        \"Content-Type\": \"application/json\",",
+									"        \"Authorization\": \"Bearer 2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060\"",
+									"    },",
+									"    body: {",
+									"        mode: \"raw\",",
+									"        raw: JSON.stringify({",
+									"            name: `${name}`,",
+									"            email: `${email}`,",
+									"            gender: \"female\",",
+									"            status: \"active\"",
+									"        })",
+									"    }",
+									"};",
+									"",
+									"pm.sendRequest(postRequest, (err, res) => {",
+									"    const jsonResponse = res.json();",
+									"",
+									"    pm.variables.set(\"id_url\", jsonResponse.id);",
+									"    pm.variables.set(\"name\", jsonResponse.name);",
+									"    pm.variables.set(\"email\", jsonResponse.email);",
+									"    pm.variables.set(\"status\", jsonResponse.status);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 3431341,\n    \"name\": \"{{name}}\",\n    \"email\": \"{{email}}\",\n    \"gender\": \"female\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}/{{id_url}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}",
+								"{{id_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Try to update user id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const id = pm.variables.get(\"id_url\");",
+									"",
+									"pm.test(\"Shows the id didn't change\", () => {",
+									"  const responseJson = pm.response.json();",
+									"",
+									"  pm.response.to.have.status(200);",
+									"  pm.expect(responseJson.id).to.eql(id);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
+									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"",
+									"const postRequest = {",
+									"    url: \"https://gorest.co.in/public/v2/users\",",
+									"    method: \"POST\",",
+									"    header: {",
+									"        \"Content-Type\": \"application/json\",",
+									"        \"Authorization\": \"Bearer 2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060\"",
+									"    },",
+									"    body: {",
+									"        mode: \"raw\",",
+									"        raw: JSON.stringify({",
+									"            name: `${name}`,",
+									"            email: `${email}`,",
+									"            gender: \"female\",",
+									"            status: \"active\"",
+									"        })",
+									"    }",
+									"};",
+									"",
+									"pm.sendRequest(postRequest, (err, res) => {",
+									"    const jsonResponse = res.json();",
+									"",
+									"    pm.variables.set(\"id_url\", jsonResponse.id);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 3431341\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}/{{id_url}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}",
+								"{{id_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Try to update user missing auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Shows error message about resource not found\", () => {",
+									"  const responseJson = pm.response.json();",
+									"",
+									"  pm.response.to.have.status(404);",
+									"  pm.expect(responseJson.message).to.eql(\"Resource not found\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
+									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"",
+									"const postRequest = {",
+									"    url: \"https://gorest.co.in/public/v2/users\",",
+									"    method: \"POST\",",
+									"    header: {",
+									"        \"Content-Type\": \"application/json\",",
+									"        \"Authorization\": \"Bearer 2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060\"",
+									"    },",
+									"    body: {",
+									"        mode: \"raw\",",
+									"        raw: JSON.stringify({",
+									"            name: `${name}`,",
+									"            email: `${email}`,",
+									"            gender: \"female\",",
+									"            status: \"active\"",
+									"        })",
+									"    }",
+									"};",
+									"",
+									"pm.sendRequest(postRequest, (err, res) => {",
+									"    const jsonResponse = res.json();",
+									"",
+									"    pm.variables.set(\"id_url\", jsonResponse.id);",
+									"    pm.variables.set(\"name\", jsonResponse.name);",
+									"    pm.variables.set(\"email\", jsonResponse.email);",
+									"    pm.variables.set(\"status\", jsonResponse.status);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{name}}\",\n    \"email\": \"{{email}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}/{{id_url}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}",
+								"{{id_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Shows success code status\", () => {",
+									"  pm.response.to.have.status(204);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
+									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"",
+									"const postRequest = {",
+									"    url: \"https://gorest.co.in/public/v2/users\",",
+									"    method: \"POST\",",
+									"    header: {",
+									"        \"Content-Type\": \"application/json\",",
+									"        \"Authorization\": \"Bearer 2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060\"",
+									"    },",
+									"    body: {",
+									"        mode: \"raw\",",
+									"        raw: JSON.stringify({",
+									"            name: `${name}`,",
+									"            email: `${email}`,",
+									"            gender: \"female\",",
+									"            status: \"active\"",
+									"        })",
+									"    }",
+									"};",
+									"",
+									"pm.sendRequest(postRequest, (err, res) => {",
+									"    const jsonResponse = res.json();",
+									"",
+									"    pm.variables.set(\"id_url\", jsonResponse.id);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}/{{id_url}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}",
+								"{{id_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Try to delete user missing auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Shows error message about resource not found\", () => {",
+									"  const responseJson = pm.response.json();",
+									"",
+									"  pm.response.to.have.status(404);",
+									"  pm.expect(responseJson.message).to.eql(\"Resource not found\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
+									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"",
+									"const postRequest = {",
+									"    url: \"https://gorest.co.in/public/v2/users\",",
+									"    method: \"POST\",",
+									"    header: {",
+									"        \"Content-Type\": \"application/json\",",
+									"        \"Authorization\": \"Bearer 2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060\"",
+									"    },",
+									"    body: {",
+									"        mode: \"raw\",",
+									"        raw: JSON.stringify({",
+									"            name: `${name}`,",
+									"            email: `${email}`,",
+									"            gender: \"female\",",
+									"            status: \"active\"",
+									"        })",
+									"    }",
+									"};",
+									"",
+									"pm.sendRequest(postRequest, (err, res) => {",
+									"    const jsonResponse = res.json();",
+									"",
+									"    pm.variables.set(\"id_url\", jsonResponse.id);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}/{{id_url}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}",
+								"{{id_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Try to delete non existent user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Shows error message about resource not found\", () => {",
+									"  const responseJson = pm.response.json();",
+									"",
+									"  pm.response.to.have.status(404);",
+									"  pm.expect(responseJson.message).to.eq(\"Resource not found\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{user_path}}/000000000000000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{user_path}}",
+								"000000000000000"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://gorest.co.in",
+			"type": "string"
+		},
+		{
+			"key": "user_path",
+			"value": "public/v2/users",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060",
+			"type": "string"
+		}
+	]
+}
