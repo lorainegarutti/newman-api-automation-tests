@@ -62,7 +62,7 @@ Try to delete non existent user.
 
 In order to run automated tests locally:
 - `yarn add global newman && yarn add newman-reporter-html`
-- `yarn test:api` and all api tests will be run using Postman collections through Newman;
+- `yarn test:api --env-var "auth_token=yourAuthToken"` and all api tests will be run using Postman collections through Newman;
 - Test html reports will be stored at `reports` folder.
 
 GitHub CI:

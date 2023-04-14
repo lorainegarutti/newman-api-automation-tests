@@ -20,9 +20,7 @@ jobs:
         run: yarn add global newman && yarn add global newman-reporter-html
 
       - name: Run API tests
-        run: yarn test:api
-        with:
-          auth_token: ${{ secrets.AUTH_TOKEN }}
+        run: yarn test:api --env-var "auth_token=${{ secrets.AUTH_TOKEN }}"
 
       - name: Upload Newman HTML report
         uses: actions/upload-artifact@v3
