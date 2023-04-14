@@ -90,13 +90,14 @@
 								"exec": [
 									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
 									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"const token = pm.environment.get('auth_token');",
 									"",
 									"const postRequest = {",
 									"    url: \"https://gorest.co.in/public/v2/users\",",
 									"    method: \"POST\",",
 									"    header: {",
 									"        \"Content-Type\": \"application/json\",",
-									"        \"Authorization\": \"Bearer 2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060\"",
+									"        \"Authorization\": `Bearer ${token}`",
 									"    },",
 									"    body: {",
 									"        mode: \"raw\",",
@@ -302,6 +303,43 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
+									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"const token = pm.environment.get('auth_token');",
+									"",
+									"const postRequest = {",
+									"    url: \"https://gorest.co.in/public/v2/users\",",
+									"    method: \"POST\",",
+									"    header: {",
+									"        \"Content-Type\": \"application/json\",",
+									"        \"Authorization\": `Bearer ${token}`",
+									"    },",
+									"    body: {",
+									"        mode: \"raw\",",
+									"        raw: JSON.stringify({",
+									"            name: `${name}`,",
+									"            email: `${email}`,",
+									"            gender: \"female\",",
+									"            status: \"active\"",
+									"        })",
+									"    }",
+									"};",
+									"",
+									"pm.sendRequest(postRequest, (err, res) => {",
+									"    const jsonResponse = res.json();",
+									"",
+									"    pm.variables.set(\"name\", jsonResponse.name);",
+									"    pm.variables.set(\"email\", jsonResponse.email);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -319,7 +357,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Amanda Embranthiri\",\n    \"email\": \"amanda@email.org\",\n    \"gender\": \"female\",\n    \"status\": \"active\"\n}",
+							"raw": "{\n    \"name\": \"{{name}}\",\n    \"email\": \"{{email}}\",\n    \"gender\": \"female\",\n    \"status\": \"active\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -492,13 +530,14 @@
 								"exec": [
 									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
 									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"const token = pm.environment.get('auth_token');",
 									"",
 									"const postRequest = {",
 									"    url: \"https://gorest.co.in/public/v2/users\",",
 									"    method: \"POST\",",
 									"    header: {",
 									"        \"Content-Type\": \"application/json\",",
-									"        \"Authorization\": \"Bearer 2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060\"",
+									"        \"Authorization\": `Bearer ${token}`",
 									"    },",
 									"    body: {",
 									"        mode: \"raw\",",
@@ -586,13 +625,14 @@
 								"exec": [
 									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
 									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"const token = pm.environment.get('auth_token');",
 									"",
 									"const postRequest = {",
 									"    url: \"https://gorest.co.in/public/v2/users\",",
 									"    method: \"POST\",",
 									"    header: {",
 									"        \"Content-Type\": \"application/json\",",
-									"        \"Authorization\": \"Bearer 2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060\"",
+									"        \"Authorization\": `Bearer ${token}`",
 									"    },",
 									"    body: {",
 									"        mode: \"raw\",",
@@ -675,13 +715,14 @@
 								"exec": [
 									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
 									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"const token = pm.environment.get('auth_token');",
 									"",
 									"const postRequest = {",
 									"    url: \"https://gorest.co.in/public/v2/users\",",
 									"    method: \"POST\",",
 									"    header: {",
 									"        \"Content-Type\": \"application/json\",",
-									"        \"Authorization\": \"Bearer 2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060\"",
+									"        \"Authorization\": `Bearer ${token}`",
 									"    },",
 									"    body: {",
 									"        mode: \"raw\",",
@@ -764,13 +805,14 @@
 								"exec": [
 									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
 									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"const token = pm.environment.get('auth_token');",
 									"",
 									"const postRequest = {",
 									"    url: \"https://gorest.co.in/public/v2/users\",",
 									"    method: \"POST\",",
 									"    header: {",
 									"        \"Content-Type\": \"application/json\",",
-									"        \"Authorization\": \"Bearer 2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060\"",
+									"        \"Authorization\": `Bearer ${token}`",
 									"    },",
 									"    body: {",
 									"        mode: \"raw\",",
@@ -853,13 +895,14 @@
 								"exec": [
 									"const name = pm.variables.replaceIn(\"{{$randomFullName}}\");",
 									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\");",
+									"const token = pm.environment.get('auth_token');",
 									"",
 									"const postRequest = {",
 									"    url: \"https://gorest.co.in/public/v2/users\",",
 									"    method: \"POST\",",
 									"    header: {",
 									"        \"Content-Type\": \"application/json\",",
-									"        \"Authorization\": \"Bearer 2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060\"",
+									"        \"Authorization\": `Bearer ${token}`",
 									"    },",
 									"    body: {",
 									"        mode: \"raw\",",
@@ -1013,11 +1056,6 @@
 		{
 			"key": "user_path",
 			"value": "public/v2/users",
-			"type": "string"
-		},
-		{
-			"key": "auth_token",
-			"value": "2d964e852354140a5423b3cfebd6ed17940c38a0987f329b32bef2b62c787060",
 			"type": "string"
 		}
 	]
